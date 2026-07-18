@@ -1,6 +1,6 @@
 import csv
 import math
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Tuple
 from dataclasses import dataclass
 
 @dataclass
@@ -40,12 +40,13 @@ class Recommender:
         self.songs = songs
 
     def recommend(self, user: UserProfile, k: int = 5) -> List[Song]:
-        # TODO: Implement recommendation logic
-        return self.songs[:k]
+        prefs = {'genre': user.favorite_genre, 'mood': user.favorite_mood, 'energy': user.target_energy}
+        return sorted(self.songs, key=lambda s: score_song(prefs, vars(s))[0], reverse=True)[:k]
 
     def explain_recommendation(self, user: UserProfile, song: Song) -> str:
-        # TODO: Implement explanation logic
-        return "Explanation placeholder"
+        prefs = {'genre': user.favorite_genre, 'mood': user.favorite_mood, 'energy': user.target_energy}
+        _, reasons = score_song(prefs, vars(song))
+        return ' | '.join(reasons)
 
 def load_songs(filepath: str) -> List[Dict]:
     """
